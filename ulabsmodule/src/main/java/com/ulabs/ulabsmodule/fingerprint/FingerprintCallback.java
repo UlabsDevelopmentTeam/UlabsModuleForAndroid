@@ -6,7 +6,7 @@ package com.ulabs.ulabsmodule.fingerprint;
 
 public interface FingerprintCallback {
     /**
-     * 반드시 implement해야 한다.
+     * must be implements
      * */
     void onAuthenticated();
     void onError(String errString);

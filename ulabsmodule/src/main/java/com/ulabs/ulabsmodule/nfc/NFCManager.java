@@ -246,23 +246,6 @@ public class NFCManager{
         mAdapter.setNdefPushMessage(msg, activity, activities);
     }
 
-    /**
-     * createAbsoluteUriRecord()
-     * <intent-filter>
-
-     <action android:name=“android.nfc.action.NDEF_DISCOVERED”/>
-
-     <category android:name=“android.intent.category.DEFAULT”/>
-
-     <data android:scheme=“http”
-
-     android:host=“developer.android.com“ <- 예시
-
-     android:pathPrefix=“/index.html”/>
-
-     </intent-filter>
-
-     * */
     public NdefRecord[] createAbsoluteUriRecord(String... uriList){
         NdefRecord[] records = new NdefRecord[uriList.length];
         for(int i = 0; i < uriList.length ; i++){
@@ -272,19 +255,6 @@ public class NFCManager{
         return records;
     }
 
-    /**
-     * createMimeMediaRecord()
-     *<intent-filter>
-
-     <action android:name=“android.nfc.action.NDEF_DISCOVERED”/>
-
-     <category android:name=“android.intent.category.DEFAULT”/>
-
-     <data android:mimeType=“application/com.example.android.beam”/> <- 예시
-
-     </intent-filter>
-
-     * */
     public NdefRecord[] createMimeMediaRecord(String[] payload, String... mimeType){
         NdefRecord[] records = new NdefRecord[mimeType.length];
         for(int i = 0 ; i < mimeType.length ; i++){
@@ -296,18 +266,6 @@ public class NFCManager{
         return records;
     }
 
-    /** createWellKnownTextRecord()
-     * <intent-filter>
-
-     <action android:name=“android.nfc.action.NDEF_DISCOVERED”/>
-
-     <category android:name=“android.intent.category.DEFAULT”/>
-
-     <data android:mimeType=“text/plain”/>
-
-     </intent-filter>
-
-     * */
     public NdefRecord[] createWellKnownTextRecord(String... text){
         NdefRecord[] records = new NdefRecord[text.length];
         for(int i = 0 ; i < text.length ; i++){
@@ -318,22 +276,6 @@ public class NFCManager{
         return records;
     }
 
-    /**createWellKnownURIRecord()
-     * <intent-filter>
-
-     <action android:name=“android.nfc.action.NDEF_DISCOVERED”/>
-
-     <category android:name=“android.intent.category.DEFAULT”/>
-
-     <data android:scheme=“http”
-
-     android:host=“example.com“ <- 예시, uriField
-
-     android:pathPrefix=“”/>
-
-     </intent-filter>
-
-     * */
     public NdefRecord[] createWellKnownURIRecord(int prefix, String... uriFields){
         NdefRecord[] records = new NdefRecord[uriFields.length];
         for(int i = 0; i < uriFields.length ; i++){
@@ -347,24 +289,6 @@ public class NFCManager{
         return records;
     }
 
-
-
-    /**
-     *<intent-filter>
-
-     <action android:name=“android.nfc.action.NDEF_DISCOVERED”/>
-
-     <category android:name=“android.intent.category.DEFAULT”/>
-
-     <data android:scheme=“vnd.android.nfc”
-
-     android:host=“ext”
-
-     android:pathPrefix=“/example.com:externalType”/>
-
-     </intent-filter>
-
-     * */
 
     public NdefRecord[] createExternalTypeRecord(String payload, String... pathPrefix){
         NdefRecord[] records = new NdefRecord[pathPrefix.length];
@@ -408,7 +332,6 @@ public class NFCManager{
 
     public void useForegroundDispatch(Context context, IntentFilter... filters){
         pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, context.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        //앱에서 nfc 감지할 필터를 필요한 만큼 설정해야한다.
 
         IntentFilter[] array = new IntentFilter[filters.length];
         System.arraycopy(filters, 0, array, 0, filters.length);

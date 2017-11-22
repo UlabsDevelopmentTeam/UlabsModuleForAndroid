@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gps_usage_setting">GPS 사용 유무 설정</string>
+    <string name="gps_might_not_be_setting">GPS 설정을 하지 않았을 가능성이 있습니다. 설정창으로 가시겠습니까?</string>
+    <string name="yes">예</string>
+    <string name="no">아니오</string>
+    <string name="security_not_setting">보안이 설정되어있지 않습니다. 보안 설정을 해주세요.</string>
+    <string name="fingerprint_is_not_exist">기기에 지문이 등록되어있지 않습니다. 기기에 지문을 등록해주세요.</string>
+    <string name="recognizing_fail_retry">인식 실패… 재시도 하세요.</string>
+</resources>

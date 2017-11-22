@@ -10,6 +10,8 @@ import android.security.keystore.KeyProperties;
 import android.support.annotation.RequiresApi;
 import android.widget.Toast;
 
+import com.ulabs.ulabsmodule.R;
+
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -58,13 +60,13 @@ public class KeyMaker {
 
         KeyguardManager keyguardManager = context.getSystemService(KeyguardManager.class);
         if(keyguardManager.isKeyguardSecure()){
-            Toast.makeText(context, "보안이 설정되어있지 않습니다. 보안 설정을 해주세요.", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.security_not_setting, Toast.LENGTH_LONG).show();
             return;
         }
 
         FingerprintManager fingerprintManager = context.getSystemService(FingerprintManager.class);
         if(!fingerprintManager.hasEnrolledFingerprints()){
-            Toast.makeText(context, "기기에 지문이 등록되어있지 않습니다. 기기에 지문을 등록해주세요.", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.fingerprint_is_not_exist, Toast.LENGTH_LONG).show();
             return;
         }
 

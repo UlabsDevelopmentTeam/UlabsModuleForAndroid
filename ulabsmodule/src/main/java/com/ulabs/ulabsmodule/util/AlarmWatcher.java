@@ -14,12 +14,7 @@ import java.util.Date;
  */
 
 public class AlarmWatcher{
-    /**
-     * AlarmWatcher class
-     * AlarmManager class를 wrapping한 util class
-     * 이외에 시간 변환과 관련된 util들도 같이 정의되었다.
-     * @singleton
-     * */
+
     private static AlarmWatcher watcher;
     private AlarmManager alarmManager;
     private static final long ONE_HOUR_MILLIS = 1000*60*60;
@@ -37,12 +32,6 @@ public class AlarmWatcher{
         return watcher;
     }
 
-    /**
-     * startAlarm
-     * 현재시간을 기준으로 delay변수 만큼 시간 값을 추가하여, 알람을 발생시킨다.
-     * pendingIntent -> 알람에서 실행할 내용이 들어있는 intentSender.
-     * delay -> 추가할 시간 delay (ms단위)
-     * */
     public void startAlarm(PendingIntent pendingIntent, int delay) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delay, pendingIntent);
@@ -53,19 +42,11 @@ public class AlarmWatcher{
         }
     }
 
-    /**
-     * startAlarmRepeating
-     * 현재시간을 기준으로 delay(ms)만큼 시간 값을 추가하여 알람을 발생시키고,
-     * nextTime값(ms)만큼 알람을 반복시킨다. (Scheduling)
-     * */
+
     public void startAlarmRepeating(PendingIntent pendingIntent, int delay, long nextTime){
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delay, nextTime, pendingIntent);
     }
-    /**
-     * startEduCodePushAlarm
-     * yyyy-MM-dd HH:mm:ss형태의 string 시간값을 ms단위로 변환시켜서 알람을 발생시킨다.
-     * time -> yyyy-MM-dd HH:mm:ss format의 string
-     * */
+
     public void startEduCodePushAlarm(PendingIntent pendingIntent, String time) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -83,27 +64,17 @@ public class AlarmWatcher{
         }
     }
 
-    /**
-     * startEduCodePushAlarmRepeating
-     * firstTimeMillis값의 시간(ms)에 알람을 반복시키고 (nextTimeMillis값의 시간(ms) - firstTimeMillis값의 시간(ms)) 의 주기를 가지고 반복시킨다.(Scheduling)
-     * */
+
     public void startEduCodePushAlarmRepeating(PendingIntent pendingIntent, long firstTimeMillis, long nextTimeMillis){
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, firstTimeMillis, nextTimeMillis - firstTimeMillis, pendingIntent);
     }
 
-    /**
-     * stopAlarm
-     * AlarmManager에 등록되어 있는 Scheduling을 취소한다.
-     * */
+
     public void stopAlarm(PendingIntent pendingIntent) {
         alarmManager.cancel(pendingIntent);
     }
 
-    /**
-     * getTomorrowMillis
-     * yyyy-MM-dd HH:mm:ss 형태의 string 시간를 이용하여,
-     * 해당 날짜의 다음날 자정(00:00)인 시간을 ms단위로 리턴한다.
-     * */
+
     public long getTomorrowMillis(String today){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time_0clock = today.substring(0,11) + "00:00:00";
@@ -167,11 +138,7 @@ public class AlarmWatcher{
         }
         return "";
     }
-    /**
-     * getYesterday
-     * yyyy-MM-dd HH:mm:ss 형태의 string 날짜를 이용하여,
-     * 해당 날짜의 하루 전 자정(00:00)인 시간을 ms단위로 리턴한다.
-     * */
+
     public long getYesterdayMillis(String today){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time_0clock = today.substring(0,11) + "00:00:00";
@@ -202,11 +169,7 @@ public class AlarmWatcher{
         return 0;
     }
 
-    /**
-     * getTodayCertainTimeMillis
-     * yyyy-MM-dd HH:mm:ss 형태의 string을 이용하여 이 형태의 날짜에서
-     * HH:mm:ss형태의 원하는 시간값을 ms형태로 리턴한다.
-     * */
+
     public long getTodayCertainTimeMillis(String today, String HHmmssFormat){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time_certain = today.substring(0,11) + HHmmssFormat;
@@ -235,10 +198,7 @@ public class AlarmWatcher{
         }
         return null;
     }
-    /**
-     * getDateStringFormat
-     * ms형태의 시간값을 yyyy-MM-dd HH:mm:ss 형태의 string 시간값으로 변환해준다.
-     * */
+
     public String getDateStringFormat(long time_millis){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(time_millis);

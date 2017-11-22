@@ -69,7 +69,7 @@ public class FingerprintUtil extends FingerprintManager.AuthenticationCallback{
 
     @Override
     public void onAuthenticationFailed() {
-        callback.onError("인식 실패... 재시도 하세요.");
+        callback.onError("Authentication Failed...");
     }
 
 }
