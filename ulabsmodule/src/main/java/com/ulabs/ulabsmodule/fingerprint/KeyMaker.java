@@ -119,4 +119,7 @@ public class KeyMaker {
         }
     }
 
+    public Cipher getCipher() {
+        return cipher;
+    }
 }
