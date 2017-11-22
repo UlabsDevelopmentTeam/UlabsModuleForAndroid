@@ -70,7 +70,7 @@ public class KeyMaker {
         }
 
         KeyguardManager keyguardManager = context.getSystemService(KeyguardManager.class);
-        if(keyguardManager.isKeyguardSecure()){
+        if(!keyguardManager.isKeyguardSecure()){
             Toast.makeText(context, R.string.security_not_setting, Toast.LENGTH_LONG).show();
             return;
         }
