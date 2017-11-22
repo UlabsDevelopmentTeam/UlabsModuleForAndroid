@@ -32,11 +32,22 @@ import javax.crypto.SecretKey;
  */
 
 public class KeyMaker {
+    private static KeyMaker keyMaker;
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
 
     private Cipher cipher;
     private static final String KEY_NAME = "default_key";
+
+    private KeyMaker() {
+    }
+
+    public static KeyMaker getInstance(){
+        if(keyMaker == null){
+            keyMaker = new KeyMaker();
+        }
+        return keyMaker;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void init(Context context) {
