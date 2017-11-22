@@ -19,8 +19,11 @@ public class FingerprintUtil extends FingerprintManager.AuthenticationCallback{
     private FingerprintCallback callback;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public FingerprintUtil(Context context, FingerprintCallback callback) {
+    public FingerprintUtil(Context context) {
         fingerprintManager = context.getSystemService(FingerprintManager.class);
+    }
+
+    public void setOnFingerprintCallback(FingerprintCallback callback){
         this.callback = callback;
     }
 
