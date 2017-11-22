@@ -115,7 +115,7 @@ public class KeyMaker {
             return false;
         }
         catch (IOException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException e) {
-            throw new RuntimeException(e);
+            return false;
         }
     }
 
