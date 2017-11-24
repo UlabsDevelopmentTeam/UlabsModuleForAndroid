@@ -7,6 +7,8 @@ import android.os.CancellationSignal;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import com.ulabs.ulabsmodule.R;
+
 /**
  * Created by OH-Biz on 2017-11-20.
  */
@@ -17,10 +19,12 @@ public class FingerprintUtil extends FingerprintManager.AuthenticationCallback{
     private CancellationSignal cancellationSignal;
     private boolean selfCancelled;
     private FingerprintCallback callback;
+    private Context mContext;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public FingerprintUtil(Context context) {
         fingerprintManager = context.getSystemService(FingerprintManager.class);
+        mContext = context;
     }
 
     public void setOnFingerprintCallback(FingerprintCallback callback){
@@ -73,7 +77,7 @@ public class FingerprintUtil extends FingerprintManager.AuthenticationCallback{
 
     @Override
     public void onAuthenticationFailed() {
-        callback.onError("Authentication Failed...");
+        callback.onError(mContext.getString(R.string.recognizing_fail_retry));
     }
 
 }

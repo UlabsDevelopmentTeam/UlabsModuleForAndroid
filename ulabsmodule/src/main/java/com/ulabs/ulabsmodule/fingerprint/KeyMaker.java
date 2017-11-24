@@ -38,6 +38,7 @@ public class KeyMaker {
 
     private Cipher cipher;
     private static final String KEY_NAME = "default_key";
+    private KeyMakingFailureCallback callback;
 
     private KeyMaker() {
     }
@@ -72,12 +73,18 @@ public class KeyMaker {
         KeyguardManager keyguardManager = context.getSystemService(KeyguardManager.class);
         if(!keyguardManager.isKeyguardSecure()){
             Toast.makeText(context, R.string.security_not_setting, Toast.LENGTH_LONG).show();
+            if(callback != null){
+                callback.onKeyMakingFail(context.getString(R.string.security_not_setting));
+            }
             return;
         }
 
         FingerprintManager fingerprintManager = context.getSystemService(FingerprintManager.class);
         if(!fingerprintManager.hasEnrolledFingerprints()){
             Toast.makeText(context, R.string.fingerprint_is_not_exist, Toast.LENGTH_LONG).show();
+            if(callback != null){
+                callback.onKeyMakingFail(context.getString(R.string.fingerprint_is_not_exist));
+            }
             return;
         }
 
@@ -121,5 +128,13 @@ public class KeyMaker {
 
     public Cipher getCipher() {
         return cipher;
+    }
+
+    public void setFailureCallback(KeyMakingFailureCallback callback) {
+        this.callback = callback;
+    }
+
+    public interface KeyMakingFailureCallback{
+        void onKeyMakingFail(String errorMsg);
     }
 }
