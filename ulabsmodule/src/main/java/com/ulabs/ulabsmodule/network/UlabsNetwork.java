@@ -45,11 +45,11 @@ public class UlabsNetwork{
         return manager;
     }
 
-    public void requireStringData(int method, String url) {
+    public void requireStringData(int method, final String url) {
         StringRequest request = new StringRequest(applyRequestMethod(method), url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                callback.onResponse("string", response);
+                callback.onResponse(url, response);
             }
         }, new Response.ErrorListener() {
             @Override
