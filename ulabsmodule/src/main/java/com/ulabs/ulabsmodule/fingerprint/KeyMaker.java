@@ -8,6 +8,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.ulabs.ulabsmodule.R;
@@ -19,7 +20,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import javax.crypto.Cipher;
@@ -35,6 +35,7 @@ public class KeyMaker {
     private static KeyMaker keyMaker;
     private KeyStore keyStore;
     private KeyGenerator keyGenerator;
+    private SecretKey secretKey;
 
     private Cipher cipher;
     private static final String KEY_NAME = "default_key";
@@ -52,6 +53,7 @@ public class KeyMaker {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void init(Context context) {
+        Log.d("keyMaker", "init()");
         try {
             keyStore = KeyStore.getInstance("AndroidKeyStore");
         } catch (KeyStoreException e) {
@@ -93,6 +95,7 @@ public class KeyMaker {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void createKey(String keyName, boolean invalidatedByBiometricEnrollment) {
+        Log.d("keyMaker", "createKey()");
         try {
             keyStore.load(null);
 
@@ -105,7 +108,7 @@ public class KeyMaker {
                 builder.setInvalidatedByBiometricEnrollment(invalidatedByBiometricEnrollment);
             }
             keyGenerator.init(builder.build());
-            keyGenerator.generateKey();
+            secretKey = keyGenerator.generateKey();
         } catch (IOException |NoSuchAlgorithmException | CertificateException | InvalidAlgorithmParameterException e) {
             throw new RuntimeException(e);
         }
@@ -113,15 +116,16 @@ public class KeyMaker {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public boolean validate() {
+        Log.d("keyMaker", "validate()");
         try {
             keyStore.load(null);
-            SecretKey key = (SecretKey) keyStore.getKey(KEY_NAME,  null);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
+//            SecretKey key = (SecretKey) keyStore.getKey(KEY_NAME,  null);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             return true;
         }catch (KeyPermanentlyInvalidatedException e){
             return false;
         }
-        catch (IOException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException e) {
+        catch (IOException | NoSuchAlgorithmException | CertificateException | InvalidKeyException e) {
             return false;
         }
     }

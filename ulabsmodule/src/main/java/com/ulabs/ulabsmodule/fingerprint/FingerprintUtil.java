@@ -3,7 +3,6 @@ package com.ulabs.ulabsmodule.fingerprint;
 import android.content.Context;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
-import android.os.CancellationSignal;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
@@ -16,8 +15,6 @@ import com.ulabs.ulabsmodule.R;
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class FingerprintUtil extends FingerprintManager.AuthenticationCallback{
     private FingerprintManager fingerprintManager;
-    private CancellationSignal cancellationSignal;
-    private boolean selfCancelled;
     private FingerprintCallback callback;
     private Context mContext;
 
@@ -45,29 +42,22 @@ public class FingerprintUtil extends FingerprintManager.AuthenticationCallback{
         if(!isFingerprintAvailable()){
             return;
         }
-        cancellationSignal = new CancellationSignal();
-        selfCancelled = false;
-        fingerprintManager.authenticate(cryptoObject, cancellationSignal, 0 , this, null);
+        fingerprintManager.authenticate(cryptoObject, null, 0 , this, null);
     }
 
+    @Deprecated
     public void stopReading() {
-        if(cancellationSignal != null){
-            selfCancelled = true;
-            cancellationSignal.cancel();
-            cancellationSignal = null;
-        }
+
     }
 
     @Override
     public void onAuthenticationError(int errorCode, CharSequence errString) {
-        if(!selfCancelled){
-            callback.onError(errString.toString());
-        }
+        Log.d("FingerprintUtil", "Authentication error: " + errString);
     }
 
     @Override
     public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-        Log.d("ljm2006", "Authentication helper: " + helpString);
+        Log.d("FingerprintUtil", "Authentication helper: " + helpString);
     }
 
     @Override
