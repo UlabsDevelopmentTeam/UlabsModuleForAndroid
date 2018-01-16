@@ -20,7 +20,7 @@ import javax.crypto.spec.SecretKeySpec;
  * Created by OH-Biz on 2017-11-22.
  */
 
-public class AESEncryptor {
+public class AESGenerator {
     private static void encryptInternal(int optmode, byte[] inputText, ByteArrayOutputStream outputText){
         byte[] key = {9,8,7,6,5,4,3,2,1,0,9,8,7,6,5,4};
         byte[] iv = {1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6};
