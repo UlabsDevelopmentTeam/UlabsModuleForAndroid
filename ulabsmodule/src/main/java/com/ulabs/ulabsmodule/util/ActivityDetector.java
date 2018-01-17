@@ -13,6 +13,12 @@ public class ActivityDetector implements Application.ActivityLifecycleCallbacks 
     private boolean isActivityStarted = false;
     private Application application;
     private String stateDetectedClassName;
+    private ActivityDetectionCallback detectionCallback;
+    private int runningActivityCount = 0;
+
+    public static final int ACTIVITY_RETURNED_TO_FOREGROUND = 1;
+    public static final int ACTIVITY_FOREGROUND = 2;
+    public static final int ACTIVITY_BACKGROUND = 0;
 
     private ActivityDetector(Application application) {
         this.application = application;
@@ -32,10 +38,14 @@ public class ActivityDetector implements Application.ActivityLifecycleCallbacks 
 
     @Override
     public void onActivityStarted(Activity activity) {
+        runningActivityCount++;
         if(activity.getLocalClassName().equals(getStateDetectedClassName())){
             isActivityStarted = true;
         }
 
+        if(detectionCallback != null){
+            detectionCallback.onActivityStartDetected(activity.getLocalClassName());
+        }
     }
 
     @Override
@@ -50,7 +60,10 @@ public class ActivityDetector implements Application.ActivityLifecycleCallbacks 
 
     @Override
     public void onActivityStopped(Activity activity) {
-
+        runningActivityCount--;
+        if(detectionCallback != null){
+            detectionCallback.onActivityStopDetected(activity.getLocalClassName());
+        }
     }
 
     @Override
@@ -63,6 +76,29 @@ public class ActivityDetector implements Application.ActivityLifecycleCallbacks 
         if(activity.getLocalClassName().equals(getStateDetectedClassName())){
             isActivityStarted = false;
         }
+
+        if(detectionCallback != null){
+            detectionCallback.onActivityDestroyDetected(activity.getLocalClassName());
+        }
+
+    }
+
+    public int getAppStatus(){
+        switch (runningActivityCount){
+            case 1:{
+                return ACTIVITY_RETURNED_TO_FOREGROUND;
+            }
+            case 0:{
+                return ACTIVITY_BACKGROUND;
+            }
+            default:{
+                return ACTIVITY_FOREGROUND;
+            }
+        }
+    }
+
+    public void setDetectionCallback(ActivityDetectionCallback detectionCallback) {
+        this.detectionCallback = detectionCallback;
     }
 
     public boolean isActivityStarted(){
