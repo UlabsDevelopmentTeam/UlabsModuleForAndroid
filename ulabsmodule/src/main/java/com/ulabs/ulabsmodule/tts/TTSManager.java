@@ -1,8 +1,13 @@
 package com.ulabs.ulabsmodule.tts;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.ulabs.ulabsmodule.R;
 
 import java.util.Locale;
 
@@ -17,12 +22,22 @@ public class TTSManager implements ITTSManager {
     public static final int QUEUE_MODE_FLUSH = 0;
     public static final int QUEUE_MODE_ADD = 1;
 
-    private TTSManager(Context context) {
+    private TTSManager(final Context context) {
         tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR){
-                    tts.setLanguage(Locale.KOREAN);
+                   int languageResult = tts.setLanguage(Locale.KOREAN);
+                    if(languageResult == TextToSpeech.LANG_MISSING_DATA || languageResult == TextToSpeech.LANG_NOT_SUPPORTED){
+                        Toast.makeText(context, R.string.sound_data_not_exist, Toast.LENGTH_LONG).show();
+                        Log.e("TTSManager", "TextToSpeech language is not supported...");
+                        Intent intent = new Intent();
+                        intent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                        context.startActivity(intent);
+                    }
+                }else{
+                    Log.e("TTSManager", "TextToSpeech initialization failed!!!");
+                    Toast.makeText(context, R.string.tts_engine_initialization_failed, Toast.LENGTH_LONG).show();
                 }
             }
         });

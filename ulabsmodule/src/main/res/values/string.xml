@@ -7,4 +7,6 @@
     <string name="security_not_setting">보안이 설정되어있지 않습니다. 보안 설정을 해주세요.</string>
     <string name="fingerprint_is_not_exist">기기에 지문이 등록되어있지 않습니다. 기기에 지문을 등록해주세요.</string>
     <string name="recognizing_fail_retry">인식 실패… 재시도 하세요.</string>
+    <string name="sound_data_not_exist">음성 데이터가 존재하지 않습니다. 한국어 음성 데이터를 설치해주시거나, 구글 TTS 엔진으로 변경해보세요.</string>
+    <string name="tts_engine_initialization_failed">TTS엔진 초기화 실패.</string>
 </resources>
