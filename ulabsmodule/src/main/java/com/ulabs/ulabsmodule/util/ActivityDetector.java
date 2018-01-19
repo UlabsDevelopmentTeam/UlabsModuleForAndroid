@@ -101,6 +101,10 @@ public class ActivityDetector implements Application.ActivityLifecycleCallbacks 
         this.detectionCallback = detectionCallback;
     }
 
+    public void removeDetectionCallback(){
+        this.detectionCallback = null;
+    }
+
     public boolean isActivityStarted(){
         return isActivityStarted;
     }
