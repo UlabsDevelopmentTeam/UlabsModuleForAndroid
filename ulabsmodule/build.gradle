@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
-version = "2.3.1"
+version = "2.3.2"
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -31,7 +31,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 26
         versionCode 1
-        versionName "2.3.1"
+        versionName "2.3.2"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 

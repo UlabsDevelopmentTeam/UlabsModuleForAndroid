@@ -9,4 +9,5 @@
     <string name="recognizing_fail_retry">인식 실패… 재시도 하세요.</string>
     <string name="sound_data_not_exist">음성 데이터가 존재하지 않습니다. 한국어 음성 데이터를 설치해주시거나, 구글 TTS 엔진으로 변경해보세요.</string>
     <string name="tts_engine_initialization_failed">TTS엔진 초기화 실패.</string>
+    <string name="loading_gps_failed_because_permission_not_granted">앱에서 위치 권한을 허가하지 않아 데이터를 불러오는 데 실패했습니다. 위치 권한이 필요합니다.</string>
 </resources>

@@ -1,14 +1,18 @@
 package com.ulabs.ulabsmodule.gps;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import com.ulabs.ulabsmodule.R;
 
@@ -33,9 +37,12 @@ public class GPSManager implements LocationListener{
     private static GPSManager manager;
     private LocationManager locationManager;
 
+    private LocationChangeCallback locationChangeCallback;
+
     private GPSManager(Context mContext) {
         this.mContext = mContext;
         locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+
     }
 
     public static GPSManager getInstance(Context c){
@@ -53,47 +60,62 @@ public class GPSManager implements LocationListener{
 
 
     public void loadGPSData(){
-        checkNetworkState();
+        boolean locationPermissionGranted;
 
-        if(!isGPSEnabled && !isNetworkEnabled){
-            isGetLocation = false;
-            showGPSSettingDialog();
+        if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            locationPermissionGranted = false;
+        }else{
+            locationPermissionGranted = true;
         }
 
+        if(locationPermissionGranted){
+            checkNetworkState();
 
-        if(isNetworkEnabled){
-            isGetLocation = true;
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    MIN_TIME_BW_UPDATES,
-                    MIN_DISTANCE_CHANGE_FOR_UPDATEDS,
-                    this);
+            if(!isGPSEnabled && !isNetworkEnabled){
+                isGetLocation = false;
+                showGPSSettingDialog();
+            }
 
-            if(locationManager != null){
-                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-                if(location != null){
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
+            if(isNetworkEnabled){
+                isGetLocation = true;
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        MIN_TIME_BW_UPDATES,
+                        MIN_DISTANCE_CHANGE_FOR_UPDATEDS,
+                        this);
+
+                if(locationManager != null){
+                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                    if(location != null){
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                    }
+                }
+
+                return;
+            }
+
+            if(isGPSEnabled){
+                isGetLocation = true;
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        MIN_TIME_BW_UPDATES,
+                        MIN_DISTANCE_CHANGE_FOR_UPDATEDS,
+                        this);
+
+                if(locationManager != null){
+                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                    if(location != null){
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                    }
                 }
             }
+        }else{
+            Toast.makeText(mContext, R.string.loading_gps_failed_because_permission_not_granted, Toast.LENGTH_LONG).show();
         }
 
-        if(isGPSEnabled){
-            isGetLocation = true;
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    MIN_TIME_BW_UPDATES,
-                    MIN_DISTANCE_CHANGE_FOR_UPDATEDS,
-                    this);
-
-            if(locationManager != null){
-                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-                if(location != null){
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                }
-            }
-        }
 
     }
 
@@ -136,10 +158,18 @@ public class GPSManager implements LocationListener{
         return isGetLocation;
     }
 
+    public void setOnLocationChangeCallback(LocationChangeCallback changeCallback){
+        locationChangeCallback = changeCallback;
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
+        if(locationChangeCallback != null){
+            locationChangeCallback.onLocationChanged(location);
+        }
+
     }
 
     @Override
