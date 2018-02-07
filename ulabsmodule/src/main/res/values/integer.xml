@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="default_print_size_width">550px</dimen>
+    <dimen name="default_print_size_height">480px</dimen>
+</resources>

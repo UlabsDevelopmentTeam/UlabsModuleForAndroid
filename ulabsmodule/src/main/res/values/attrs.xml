@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="HWPrintTextView">
+        <attr name="text" format="reference|string"/>
+        <attr name="textSize" format="reference|integer"/>
+        <attr name="textAlign" format="reference|string"/>
+        <attr name="textStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+        </attr>
+        <attr name="textColorMode" format="enum">
+            <enum name="black" value="0"/>
+            <enum name="white" value="1"/>
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="HWPrintLineView">
+        <attr name="Linethickness" format="reference|integer"/>
+    </declare-styleable>
+    <declare-styleable name="HWBarcodeView">
+        <attr name="code" format="reference|string"/>
+        <attr name="barcodeWidth" format="reference|integer"/>
+        <attr name="barcodeHeight" format="reference|integer"/>
+    </declare-styleable>
+</resources>
