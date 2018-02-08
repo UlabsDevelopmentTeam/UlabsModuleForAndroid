@@ -3,7 +3,6 @@ package com.ulabs.ulabsmodule.hwprinter.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -22,22 +21,24 @@ public class HWBitmapPrinting {
     public static final int ALIGN_RIGHT = 2;
 
     public static void generate(Context context, Bitmap bitmap){
-        generate(context,bitmap,ALIGN_CENTER);
+        generate(context,bitmap,ALIGN_CENTER, DEFAULT_PRINT_WIDTH, DEFAULT_PRINT_HEIGHT);
     }
 
-    public static void generate(Context context, Bitmap bitmap, int printAlign){
+    public static void generate(Context context, Bitmap bitmap, int printAlign, int printWidth, int printHeight){
+        HWPrintDriver printDriver = new HWPrintDriver(context);
+        char deviceCount = printDriver.setDevice();
+        if(deviceCount == 0){
+            return;
+        }
+
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 
-        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, DEFAULT_PRINT_WIDTH, DEFAULT_PRINT_HEIGHT ,matrix, false);
-
-        HWPrintDriver printDriver = new HWPrintDriver(context);
-        printDriver.setDevice();
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, printWidth, printHeight ,matrix, false);
 
         int bitmapHeight = rotatedBitmap.getHeight();
         int bitmapWidth = rotatedBitmap.getWidth();
 
-        Log.d("ljm2006", "Width, height : " + bitmapWidth + " ," + bitmapHeight);
         byte rest = 0;
         int blockCnt;
         int printLine;
@@ -268,5 +269,7 @@ public class HWBitmapPrinting {
         intBuf[0] = HWPrinterDriverInterface.CMD_ESC;
         intBuf[1] = 0x69;
         printDriver.sendCommand(intBuf,2);
+
+        rotatedBitmap.recycle();
     }
 }

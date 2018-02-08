@@ -8,7 +8,6 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,7 +49,7 @@ public class HWPrintDriver implements HWPrinterDriverInterface{
         }
 
         if(device_cnt == 0){
-            Toast.makeText(context, "Can not find Hwasung USB Device!", Toast.LENGTH_LONG).show();
+            Log.d("ljm2006_HWPrintDriver", "Can not find Hwasung USB Device!");
             return 0;
         }
 
@@ -58,7 +57,7 @@ public class HWPrintDriver implements HWPrinterDriverInterface{
         UsbEndpoint usbEndpoint = usbInterface.getEndpoint(0);
 
         if(usbEndpoint.getType() != UsbConstants.USB_ENDPOINT_XFER_BULK){
-            Toast.makeText(context, "endpoint is not BULK type!", Toast.LENGTH_LONG).show();
+            Log.d("ljm2006_HWPrintDriver", "endpoint is not BULK type!");
             return 0;
         }
 

@@ -33,6 +33,8 @@ public class HWPrintTextView extends View {
 
     private int colorMode = 0;
     private int textStyle = 0;
+    private int textWidth;
+    private int textHeight;
 
     public HWPrintTextView(Context context) {
         super(context);
@@ -111,8 +113,8 @@ public class HWPrintTextView extends View {
         paint_size_calculating.setTextSize(textSize);
         paint_size_calculating.getTextBounds(text, 0, text.length(), textBound);
 
-        int textWidth = textBound.width();
-        int textHeight = textBound.height()+textSize / 5;
+        textWidth = textBound.width();
+        textHeight = textBound.height()+textSize / 5;
 
         Log.d("ljm2006_HWPrintTextView", "Text width : " + textWidth + ", Text height : " + textHeight);
 
@@ -226,6 +228,10 @@ public class HWPrintTextView extends View {
     public void setTextStyle(TextStyle textStyle) {
         this.textStyle = textStyle.ordinal();
         invalidate();
+    }
+
+    public String getText() {
+        return text;
     }
 
     public enum TextStyle{
