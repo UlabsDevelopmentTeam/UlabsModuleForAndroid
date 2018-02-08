@@ -16,7 +16,16 @@ public class HWBitmapPrinting {
     public static final int DEFAULT_PRINT_WIDTH = 550;
     public static final int DEFAULT_PRINT_HEIGHT = 480;
 
+
+    public static final int ALIGN_CENTER = 0;
+    public static final int ALIGN_LEFT = 1;
+    public static final int ALIGN_RIGHT = 2;
+
     public static void generate(Context context, Bitmap bitmap){
+        generate(context,bitmap,ALIGN_CENTER);
+    }
+
+    public static void generate(Context context, Bitmap bitmap, int printAlign){
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 
@@ -192,21 +201,38 @@ public class HWBitmapPrinting {
                     }
                 }
             }
-            // righting print position
-            intBuf[0] = HWPrinterDriverInterface.CMD_ESC;
-            intBuf[1] = 0x61;
-            intBuf[2] = 0x02;
-            // call send data
-            printDriver.sendCommand(intBuf,3);
 
-            /*// centering print position
-            intBuf[0] = CMD_ESC;
-            intBuf[1] = 0x61;
-            intBuf[2] = 0x01;
-            // call send data
-            printDriver.sendCommand(intBuf,3);*/
+            switch (printAlign){
+                case ALIGN_CENTER:{
+                    // centering print position
+                    intBuf[0] = HWPrinterDriverInterface.CMD_ESC;
+                    intBuf[1] = 0x61;
+                    intBuf[2] = 0x01;
+                    // call send data
+                    printDriver.sendCommand(intBuf,3);
+                    break;
+                }
+                case ALIGN_LEFT:{
+                    // lefting print position
+                    intBuf[0] = HWPrinterDriverInterface.CMD_ESC;
+                    intBuf[1] = 0x61;
+                    intBuf[2] = 0x00;
+                    // call send data
+                    printDriver.sendCommand(intBuf,3);
+                    break;
+                }
+                case ALIGN_RIGHT:{
+                    // righting print position
+                    intBuf[0] = HWPrinterDriverInterface.CMD_ESC;
+                    intBuf[1] = 0x61;
+                    intBuf[2] = 0x02;
+                    // call send data
+                    printDriver.sendCommand(intBuf,3);
+                    break;
+                }
+            }
 
-            // send raster bitimage command 8byte
+             // send raster bitimage command 8byte
             intBuf2[0] = HWPrintDriver.CMD_GS;
             intBuf2[1] = 'v';
             intBuf2[2] = '0';
