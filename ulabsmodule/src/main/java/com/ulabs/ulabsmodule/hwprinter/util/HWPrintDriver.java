@@ -1,5 +1,6 @@
 package com.ulabs.ulabsmodule.hwprinter.util;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
@@ -121,5 +122,9 @@ public class HWPrintDriver implements HWPrinterDriverInterface{
             return mIntBuf[0];
         }
         return -1;
+    }
+
+    public void requestPermission(UsbDevice usbDevice, PendingIntent permissionIntent){
+        usbManager.requestPermission(usbDevice, permissionIntent);
     }
 }

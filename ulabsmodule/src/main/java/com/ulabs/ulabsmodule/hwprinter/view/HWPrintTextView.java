@@ -7,6 +7,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +38,10 @@ public class HWPrintTextView extends View {
     private int textStyle = 0;
     private int textWidth;
     private int textHeight;
+    private StaticLayout staticLayout;
+    private TextPaint textPaint;
+
+    private int newLine = 0;
 
     public HWPrintTextView(Context context) {
         super(context);
@@ -62,6 +69,8 @@ public class HWPrintTextView extends View {
         paint_size_calculating = new Paint();
         textBound = new Rect();
 
+        textPaint = new TextPaint();
+
     }
 
     private void getAttrs(AttributeSet attributeSet){
@@ -81,6 +90,9 @@ public class HWPrintTextView extends View {
         if(text == null){
             text = "";
         }
+
+        String[] separation = text.split("\n");
+        newLine = separation.length;
 
         textSize = typedArray.getInt(R.styleable.HWPrintTextView_textSize, 50);
         textAlign = typedArray.getString(R.styleable.HWPrintTextView_textAlign);
@@ -114,7 +126,12 @@ public class HWPrintTextView extends View {
         paint_size_calculating.getTextBounds(text, 0, text.length(), textBound);
 
         textWidth = textBound.width();
-        textHeight = textBound.height()+textSize / 5;
+//        Text Height Setting
+        if(newLine == 0){
+            textHeight = textBound.height() + textSize / 5;
+        }else{
+            textHeight = textBound.height() * (1 + newLine);
+        }
 
         Log.d("ljm2006_HWPrintTextView", "Text width : " + textWidth + ", Text height : " + textHeight);
 
@@ -165,45 +182,51 @@ public class HWPrintTextView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-//        canvas.drawPaint(paint_background);
-        paint_text.setTextSize(textSize);
-//        paint_text.setAntiAlias(true);
+        textPaint.setTextSize(textSize);
 
-        if(textAlign.equals("center")){
-            paint_text.setTextAlign(Paint.Align.CENTER);
-        }else if(textAlign.equals("left")){
-            paint_text.setTextAlign(Paint.Align.LEFT);
-        }else if(textAlign.equals("right")){
-            paint_text.setTextAlign(Paint.Align.RIGHT);
+        switch (colorMode){
+            case 0:{
+                textPaint.setColor(Color.BLACK);
+                break;
+            }
+            case 1:{
+                textPaint.setColor(Color.WHITE);
+                break;
+            }
         }
 
         switch (textStyle){
             case 0:{
-                paint_text.setTypeface(Typeface.create((String)null, Typeface.NORMAL));
+                textPaint.setTypeface(Typeface.create((String)null, Typeface.NORMAL));
                 break;
             }
             case 1:{
-                paint_text.setTypeface(Typeface.create((String)null, Typeface.BOLD));
+                textPaint.setTypeface(Typeface.create((String)null, Typeface.BOLD));
                 break;
             }
         }
 
-        switch (colorMode){
-            case 0:{
-                paint_text.setColor(Color.BLACK);
-                break;
-            }
-            case 1:{
-                paint_text.setColor(Color.WHITE);
-                break;
-            }
+        if(textAlign.equals("center")){
+            staticLayout = new StaticLayout(text,textPaint, canvas.getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+        }else if(textAlign.equals("left")){
+            staticLayout = new StaticLayout(text,textPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+        }else if(textAlign.equals("right")){
+            staticLayout = new StaticLayout(text,textPaint, canvas.getWidth(), Layout.Alignment.ALIGN_OPPOSITE, 1.0f, 0.0f, false);
         }
 
-        canvas.drawText(text, getWidth()/2, getHeight()-(textSize / 5), paint_text);
+        canvas.save();
+        canvas.translate(0,0);
+        staticLayout.draw(canvas);
+        canvas.restore();
     }
 
     public void setText(String text) {
         this.text = text;
+
+        newLine = 0;
+        String[] separation = text.split("\n");
+        newLine = separation.length;
+        requestLayout();
         invalidate();
     }
 
