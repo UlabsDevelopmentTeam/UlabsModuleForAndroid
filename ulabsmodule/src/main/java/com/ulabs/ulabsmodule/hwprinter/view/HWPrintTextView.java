@@ -41,7 +41,7 @@ public class HWPrintTextView extends View {
     private StaticLayout staticLayout;
     private TextPaint textPaint;
 
-    private int newLine = 0;
+    private int currentLine = 1;
 
     public HWPrintTextView(Context context) {
         super(context);
@@ -92,7 +92,8 @@ public class HWPrintTextView extends View {
         }
 
         String[] separation = text.split("\n");
-        newLine = separation.length;
+        currentLine = separation.length;
+        Log.d("ljm2006","separation length : " +  separation.length);
 
         textSize = typedArray.getInt(R.styleable.HWPrintTextView_textSize, 50);
         textAlign = typedArray.getString(R.styleable.HWPrintTextView_textAlign);
@@ -127,10 +128,10 @@ public class HWPrintTextView extends View {
 
         textWidth = textBound.width();
 //        Text Height Setting
-        if(newLine == 0){
+        if(currentLine == 1){
             textHeight = textBound.height() + textSize / 5;
         }else{
-            textHeight = textBound.height() * (1 + newLine);
+            textHeight = textBound.height() * (currentLine + 1);
         }
 
         Log.d("ljm2006_HWPrintTextView", "Text width : " + textWidth + ", Text height : " + textHeight);
@@ -223,9 +224,9 @@ public class HWPrintTextView extends View {
     public void setText(String text) {
         this.text = text;
 
-        newLine = 0;
+        currentLine = 0;
         String[] separation = text.split("\n");
-        newLine = separation.length;
+        currentLine = separation.length;
         requestLayout();
         invalidate();
     }
