@@ -127,12 +127,14 @@ public class HWPrintDriver implements HWPrinterDriverInterface{
     public void requestPermission(PendingIntent permissionIntent){
         HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
-        usbManager.requestPermission(usbDevice, permissionIntent);
 
         while (deviceIterator.hasNext()){
             UsbDevice device = deviceIterator.next();
             Log.d("ljm2006", "DeviceName : " + device.getDeviceName());
-            usbManager.requestPermission(device, permissionIntent);
+            boolean containsVendorId = device.toString().contains("mVendorId=6");
+            if(containsVendorId){
+                usbManager.requestPermission(device, permissionIntent);
+            }
         }
     }
 }
