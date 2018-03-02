@@ -29,7 +29,7 @@ public class HWPrintUsbReceiver extends BroadcastReceiver {
                     if(device != null){
                         /*HWPrintDriver driver = new HWPrintDriver(context);
                         driver.setDevice();*/
-                        Toast.makeText(context, "USB 연결이 승인되었습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "USB permission granted!", Toast.LENGTH_SHORT).show();
                         callback.onPermissionGranted();
                     }
                 }else{
