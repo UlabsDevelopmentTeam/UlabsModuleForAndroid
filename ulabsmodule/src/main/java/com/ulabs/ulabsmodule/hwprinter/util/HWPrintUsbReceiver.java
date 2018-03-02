@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by OH-Biz on 2018-02-12.
@@ -29,7 +28,7 @@ public class HWPrintUsbReceiver extends BroadcastReceiver {
                     if(device != null){
                         /*HWPrintDriver driver = new HWPrintDriver(context);
                         driver.setDevice();*/
-                        Toast.makeText(context, "USB permission granted!", Toast.LENGTH_SHORT).show();
+                        Log.d("ljm2006_UsbReceiver", "USB Permission granted!!");
                         callback.onPermissionGranted();
                     }
                 }else{
