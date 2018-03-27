@@ -33,7 +33,9 @@ public class ActivityDetector implements Application.ActivityLifecycleCallbacks 
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+        if(detectionCallback != null){
+            detectionCallback.onActivityCreateDetected(activity.getLocalClassName());
+        }
     }
 
     @Override

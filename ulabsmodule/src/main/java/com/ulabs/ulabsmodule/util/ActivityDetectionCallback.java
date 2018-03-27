@@ -5,6 +5,7 @@ package com.ulabs.ulabsmodule.util;
  */
 
 public interface ActivityDetectionCallback {
+    void onActivityCreateDetected(String activityName);
     void onActivityStartDetected(String activityName);
     void onActivityStopDetected(String activityName);
     void onActivityDestroyDetected(String activityName);
