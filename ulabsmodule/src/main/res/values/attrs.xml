@@ -3,7 +3,11 @@
     <declare-styleable name="HWPrintTextView">
         <attr name="text" format="reference|string"/>
         <attr name="textSize" format="reference|integer"/>
-        <attr name="textAlign" format="reference|string"/>
+        <attr name="textAlign" format="enum">
+            <enum name="left" value="1"/>
+            <enum name="center" value="0"/>
+            <enum name="right" value="2"/>
+        </attr>
         <attr name="textStyle" format="enum">
             <enum name="normal" value="0"/>
             <enum name="bold" value="1"/>

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.text.DynamicLayout;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -26,7 +27,7 @@ public class HWPrintTextView extends View {
     private Paint paint_background;
 
     private String text;
-    private String textAlign;
+    private int textAlign = 0;
     private int textSize;
 
     private int width;
@@ -39,9 +40,12 @@ public class HWPrintTextView extends View {
     private int textWidth;
     private int textHeight;
     private StaticLayout staticLayout;
+    private DynamicLayout dynamicLayout;
     private TextPaint textPaint;
 
     private int currentLine = 1;
+    private Rect sidePaddingRect;
+    private int paddingX;
 
     public HWPrintTextView(Context context) {
         super(context);
@@ -68,9 +72,8 @@ public class HWPrintTextView extends View {
         paint_background.setStyle(Paint.Style.FILL);
         paint_size_calculating = new Paint();
         textBound = new Rect();
-
+        sidePaddingRect = new Rect();
         textPaint = new TextPaint();
-
     }
 
     private void getAttrs(AttributeSet attributeSet){
@@ -96,9 +99,9 @@ public class HWPrintTextView extends View {
         Log.d("ljm2006","separation length : " +  separation.length);
 
         textSize = typedArray.getInt(R.styleable.HWPrintTextView_textSize, 50);
-        textAlign = typedArray.getString(R.styleable.HWPrintTextView_textAlign);
-        if(textAlign == null){
-            textAlign = "center";
+        //default -> left
+        if(typedArray.hasValue(R.styleable.HWPrintTextView_textAlign)){
+            textAlign = typedArray.getInt(R.styleable.HWPrintTextView_textAlign, 1);
         }
 
         if(typedArray.hasValue(R.styleable.HWPrintTextView_textStyle)){
@@ -129,10 +132,11 @@ public class HWPrintTextView extends View {
         textWidth = textBound.width();
 //        Text Height Setting
         if(currentLine == 1){
-            textHeight = textBound.height() + textSize / 5;
+            textHeight = textBound.height() + textSize / 4;
         }else{
             textHeight = textBound.height() * (currentLine + 1);
         }
+
 
         Log.d("ljm2006_HWPrintTextView", "Text width : " + textWidth + ", Text height : " + textHeight);
 
@@ -140,6 +144,8 @@ public class HWPrintTextView extends View {
 //        height = MeasureSpec.getSize(heightMeasureSpec);
 
         Log.d("ljm2006_HWPrintTextView", "width : " + width + ", height : " + height);
+
+        paddingX = (width - textWidth) / 2;
 
         switch (widthMode){
             case MeasureSpec.AT_MOST:{
@@ -207,18 +213,38 @@ public class HWPrintTextView extends View {
             }
         }
 
-        if(textAlign.equals("center")){
-            staticLayout = new StaticLayout(text,textPaint, canvas.getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
-        }else if(textAlign.equals("left")){
-            staticLayout = new StaticLayout(text,textPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-        }else if(textAlign.equals("right")){
-            staticLayout = new StaticLayout(text,textPaint, canvas.getWidth(), Layout.Alignment.ALIGN_OPPOSITE, 1.0f, 0.0f, false);
-        }
+        dynamicLayout = new DynamicLayout(text, textPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 2.0f, false);
 
-        canvas.save();
-        canvas.translate(0,0);
-        staticLayout.draw(canvas);
-        canvas.restore();
+        drawText(canvas, textAlign);
+    }
+
+    private void drawText(Canvas canvas, int textAlign){
+        switch (textAlign){
+            case 0:{
+//                center
+                canvas.save();
+                canvas.translate(paddingX,0);
+                dynamicLayout.draw(canvas);
+                canvas.restore();
+                break;
+            }
+            case 1:{
+//                left
+                canvas.save();
+                canvas.translate(0,0);
+                dynamicLayout.draw(canvas);
+                canvas.restore();
+                break;
+            }
+            case 2:{
+//                right
+                canvas.save();
+                canvas.translate(paddingX * 2, 0);
+                dynamicLayout.draw(canvas);
+                canvas.restore();
+                break;
+            }
+        }
     }
 
     public void setText(String text) {
@@ -231,8 +257,8 @@ public class HWPrintTextView extends View {
         invalidate();
     }
 
-    public void setTextAlign(String textAlign) {
-        this.textAlign = textAlign;
+    public void setTextAlign(AlignMode alignMode) {
+        this.textAlign = alignMode.ordinal();
         invalidate();
     }
 
@@ -264,6 +290,10 @@ public class HWPrintTextView extends View {
 
     public enum ColorMode{
         BLACK, WHITE
+    }
+
+    public enum AlignMode{
+        CENTER, LEFT, RIGHT
     }
 
 }
