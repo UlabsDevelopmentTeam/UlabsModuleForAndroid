@@ -23,6 +23,7 @@ import com.ulabs.ulabsmodule.R;
  */
 
 public class HWPrintTextView extends View {
+    private static final String TAG = "HWPrintTextView";
     private Paint paint_text;
     private Paint paint_background;
 
@@ -129,7 +130,13 @@ public class HWPrintTextView extends View {
         paint_size_calculating.setTextSize(textSize);
         paint_size_calculating.getTextBounds(text, 0, text.length(), textBound);
 
-        textWidth = textBound.width();
+        String regex = ".*[가-힣]+.*";
+        if(text.matches(regex)){
+            textWidth = textBound.width() + (textBound.width()/20);
+        }else{
+            textWidth = textBound.width();
+        }
+
 //        Text Height Setting
         if(currentLine == 1){
             textHeight = textBound.height() + textSize / 4;
@@ -138,14 +145,8 @@ public class HWPrintTextView extends View {
         }
 
 
-        Log.d("ljm2006_HWPrintTextView", "Text width : " + textWidth + ", Text height : " + textHeight);
-
 //        width = MeasureSpec.getSize(widthMeasureSpec);
 //        height = MeasureSpec.getSize(heightMeasureSpec);
-
-        Log.d("ljm2006_HWPrintTextView", "width : " + width + ", height : " + height);
-
-        paddingX = (width - textWidth) / 2;
 
         switch (widthMode){
             case MeasureSpec.AT_MOST:{
@@ -177,6 +178,8 @@ public class HWPrintTextView extends View {
                 break;
             }
         }
+
+        paddingX = (width - textWidth) / 2;
 //        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(width, height);
     }
@@ -213,8 +216,7 @@ public class HWPrintTextView extends View {
             }
         }
 
-        dynamicLayout = new DynamicLayout(text, textPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 2.0f, false);
-
+        dynamicLayout = new DynamicLayout(text, textPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
         drawText(canvas, textAlign);
     }
 
