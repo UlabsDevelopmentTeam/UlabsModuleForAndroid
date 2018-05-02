@@ -44,8 +44,6 @@ public class HWPrintDriver implements HWPrinterDriverInterface{
             if(containsVendorId){
                 usbDevice = device;
                 device_cnt++;
-            }else{
-                device_cnt = 0;
             }
         }
 
