@@ -12,7 +12,6 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.ulabs.ulabsmodule.R;
@@ -97,7 +96,6 @@ public class HWPrintTextView extends View {
 
         String[] separation = text.split("\n");
         currentLine = separation.length;
-        Log.d("ljm2006","separation length : " +  separation.length);
 
         textSize = typedArray.getInt(R.styleable.HWPrintTextView_textSize, 50);
         //default -> left
