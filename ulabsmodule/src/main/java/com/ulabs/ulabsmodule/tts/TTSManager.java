@@ -54,24 +54,26 @@ public class TTSManager implements ITTSManager {
 
     @Override
     public void speak(String text, float pitch, float speed, int queueMode) {
-        tts.setPitch(pitch);
-        tts.setSpeechRate(speed);
-        switch (queueMode){
-            case QUEUE_MODE_FLUSH:{
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
-                }else{
-                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        if(tts != null){
+            tts.setPitch(pitch);
+            tts.setSpeechRate(speed);
+            switch (queueMode){
+                case QUEUE_MODE_FLUSH:{
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+                    }else{
+                        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                    break;
                 }
-                break;
-            }
-            case QUEUE_MODE_ADD:{
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                    tts.speak(text, TextToSpeech.QUEUE_ADD, null, null);
-                }else{
-                    tts.speak(text, TextToSpeech.QUEUE_ADD, null);
+                case QUEUE_MODE_ADD:{
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                        tts.speak(text, TextToSpeech.QUEUE_ADD, null, null);
+                    }else{
+                        tts.speak(text, TextToSpeech.QUEUE_ADD, null);
+                    }
+                    break;
                 }
-                break;
             }
         }
     }

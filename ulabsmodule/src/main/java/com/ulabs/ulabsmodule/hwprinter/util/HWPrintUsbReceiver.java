@@ -29,7 +29,9 @@ public class HWPrintUsbReceiver extends BroadcastReceiver {
                         /*HWPrintDriver driver = new HWPrintDriver(context);
                         driver.setDevice();*/
                         Log.d("ljm2006_UsbReceiver", "USB Permission granted!!");
-                        callback.onPermissionGranted();
+
+                        if(callback != null)
+                            callback.onPermissionGranted();
                     }
                 }else{
                     Log.d("ljm2006_UsbReceiver", "USB Permission denied...");
