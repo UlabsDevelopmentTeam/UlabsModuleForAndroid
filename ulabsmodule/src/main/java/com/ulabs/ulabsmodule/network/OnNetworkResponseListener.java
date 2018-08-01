@@ -5,6 +5,6 @@ package com.ulabs.ulabsmodule.network;
  */
 
 public interface OnNetworkResponseListener {
-    void onResponse(String requestURL, String result);
-    void onErrorResponse(String result);
+    void onResponse(String url, String result);
+    void onErrorResponse(String url,String result);
 }

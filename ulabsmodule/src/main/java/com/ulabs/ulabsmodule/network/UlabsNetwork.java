@@ -1,12 +1,8 @@
 package com.ulabs.ulabsmodule.network;
 
-/**
- * Created by OH-Biz on 2017-11-20.
- */
-
 import android.content.Context;
 
-import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -54,7 +50,7 @@ public class UlabsNetwork{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                callback.onErrorResponse(error.toString());
+                callback.onErrorResponse(url,error.fillInStackTrace().toString());
             }
         });
 
@@ -72,11 +68,11 @@ public class UlabsNetwork{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                callback.onErrorResponse(error.toString());
+                callback.onErrorResponse(url,error.fillInStackTrace().toString());
             }
         }){
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams(){
                 return params;
             }
         };
@@ -93,15 +89,15 @@ public class UlabsNetwork{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                callback.onErrorResponse(error.toString());
+                callback.onErrorResponse(url,error.fillInStackTrace().toString());
             }
         }){
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams(){
                 return params;
             }
         };
-
+        request.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         requestQueue.add(request);
     }
 
