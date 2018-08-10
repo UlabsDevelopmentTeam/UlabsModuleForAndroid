@@ -124,4 +124,9 @@ public class HWQRCodeView extends View {
         }
 
     }
+
+    public void setData(String data){
+        code = data;
+        invalidate();
+    }
 }
