@@ -47,6 +47,8 @@ public class HWPrintTextView extends View {
     private Rect sidePaddingRect;
     private int paddingX;
 
+    private boolean textSizeMeasureViewHeight = false;
+
     public HWPrintTextView(Context context) {
         super(context);
         initView();
@@ -111,6 +113,9 @@ public class HWPrintTextView extends View {
             colorMode = typedArray.getInt(R.styleable.HWPrintTextView_textColorMode, 0);
         }
 
+        if(typedArray.hasValue(R.styleable.HWPrintTextView_textSizeMeasureViewHeight)){
+            textSizeMeasureViewHeight = typedArray.getBoolean(R.styleable.HWPrintTextView_textSizeMeasureViewHeight, false);
+        }
 
         typedArray.recycle();
     }
@@ -124,6 +129,9 @@ public class HWPrintTextView extends View {
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
+        if(textSizeMeasureViewHeight){
+            textSize = (3 * heightSize) / 4;
+        }
 
         paint_size_calculating.setTextSize(textSize);
         paint_size_calculating.getTextBounds(text, 0, text.length(), textBound);
@@ -216,6 +224,11 @@ public class HWPrintTextView extends View {
 
         dynamicLayout = new DynamicLayout(text, textPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
         drawText(canvas, textAlign);
+    }
+
+    public void setTextSizeMeasureViewHeight(boolean textSizeMeasureViewHeight) {
+        this.textSizeMeasureViewHeight = textSizeMeasureViewHeight;
+        invalidate();
     }
 
     private void drawText(Canvas canvas, int textAlign){

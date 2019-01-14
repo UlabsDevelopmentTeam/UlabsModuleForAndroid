@@ -16,6 +16,9 @@
             <enum name="black" value="0"/>
             <enum name="white" value="1"/>
         </attr>
+        <attr name="textSizeMeasureViewHeight" format="boolean">
+
+        </attr>
     </declare-styleable>
     <declare-styleable name="HWPrintLineView">
         <attr name="Linethickness" format="reference|integer"/>
