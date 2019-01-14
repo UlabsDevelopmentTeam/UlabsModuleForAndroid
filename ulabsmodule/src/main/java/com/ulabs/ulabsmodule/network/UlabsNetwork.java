@@ -51,6 +51,9 @@ public class UlabsNetwork{
             @Override
             public void onErrorResponse(VolleyError error) {
                 callback.onErrorResponse(url,error.fillInStackTrace().toString());
+                if(error.fillInStackTrace().toString().toLowerCase().contains("timeout")){
+                    callback.onTimeOut(url);
+                }
             }
         });
 
@@ -69,6 +72,9 @@ public class UlabsNetwork{
             @Override
             public void onErrorResponse(VolleyError error) {
                 callback.onErrorResponse(url,error.fillInStackTrace().toString());
+                if(error.fillInStackTrace().toString().toLowerCase().contains("timeout")){
+                    callback.onTimeOut(url);
+                }
             }
         }){
             @Override
@@ -90,6 +96,9 @@ public class UlabsNetwork{
             @Override
             public void onErrorResponse(VolleyError error) {
                 callback.onErrorResponse(url,error.fillInStackTrace().toString());
+                if(error.fillInStackTrace().toString().toLowerCase().contains("timeout")){
+                    callback.onTimeOut(url);
+                }
             }
         }){
             @Override
