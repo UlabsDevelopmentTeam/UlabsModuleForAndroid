@@ -138,7 +138,7 @@ public class HWPrintTextView extends View {
 
         String regex = ".*[가-힣]+.*";
         if(text.matches(regex)){
-            textWidth = textBound.width() + (textBound.width()/20);
+            textWidth = textBound.width() + (textBound.width()/10);
         }else{
             textWidth = textBound.width();
         }
