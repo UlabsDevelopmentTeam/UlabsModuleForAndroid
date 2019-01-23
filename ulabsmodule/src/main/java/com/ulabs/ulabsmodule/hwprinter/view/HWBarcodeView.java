@@ -23,6 +23,7 @@ public class HWBarcodeView extends View {
     private int barcodeWidth;
     private int barcodeHeight;
     private String code;
+    private boolean dependOnViewSize = false;
 
     private int width;
     private int height;
@@ -59,6 +60,7 @@ public class HWBarcodeView extends View {
         code = typedArray.getString(R.styleable.HWBarcodeView_code);
         barcodeWidth = typedArray.getInt(R.styleable.HWBarcodeView_barcodeWidth, 100);
         barcodeHeight = typedArray.getInt(R.styleable.HWBarcodeView_barcodeHeight, 50);
+        dependOnViewSize = typedArray.getBoolean(R.styleable.HWBarcodeView_dependOnViewSize, false);
 
         typedArray.recycle();
     }
@@ -73,6 +75,11 @@ public class HWBarcodeView extends View {
 
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        if(dependOnViewSize){
+            barcodeWidth = widthSize;
+            barcodeHeight = heightSize;
+        }
 
         switch (widthMode){
             case MeasureSpec.AT_MOST:{
@@ -158,6 +165,11 @@ public class HWBarcodeView extends View {
 
     public void setBarcodeHeight(int barcodeHeight) {
         this.barcodeHeight = barcodeHeight;
+        invalidate();
+    }
+
+    public void setDependOnViewSize(boolean dependOnViewSize) {
+        this.dependOnViewSize = dependOnViewSize;
         invalidate();
     }
 }

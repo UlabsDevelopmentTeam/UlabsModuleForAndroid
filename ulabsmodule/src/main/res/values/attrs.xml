@@ -27,6 +27,7 @@
         <attr name="code" format="reference|string"/>
         <attr name="barcodeWidth" format="reference|integer"/>
         <attr name="barcodeHeight" format="reference|integer"/>
+        <attr name="dependOnViewSize" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="HWQRCodeView">
         <attr name="qr_code_data" format="string"/>
