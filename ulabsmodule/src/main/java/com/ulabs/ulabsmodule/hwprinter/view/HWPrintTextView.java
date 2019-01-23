@@ -12,6 +12,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.ulabs.ulabsmodule.R;
@@ -137,10 +138,26 @@ public class HWPrintTextView extends View {
         paint_size_calculating.getTextBounds(text, 0, text.length(), textBound);
 
         String regex = ".*[가-힣]+.*";
+//        한글이 포함되어 있는지에 대한 정규 표현식 비교
         if(text.matches(regex)){
-            textWidth = textBound.width() + (textBound.width()/10);
+            //            text가 숫자로 끝나는지에 대한 정규 표현식 비교
+            if(text.matches(".*\\p{N}$")) {
+
+                Log.d("ljm2006", "regExp match2 -> " + true);
+                textWidth = textBound.width() + (textBound.width() / text.length());
+            }else{
+
+                textWidth = textBound.width() + (textBound.width()/10);
+            }
+
         }else{
-            textWidth = textBound.width();
+
+            textWidth = textBound.width() + (textBound.width()/10);
+//            text가 숫자로 끝나는지에 대한 정규 표현식 비교
+            if(text.matches(".*\\p{N}$")){
+
+                textWidth = textBound.width() + (textBound.width() / text.length());
+            }
         }
 
 //        Text Height Setting
@@ -150,9 +167,6 @@ public class HWPrintTextView extends View {
             textHeight = textBound.height() * (currentLine + 1);
         }
 
-
-//        width = MeasureSpec.getSize(widthMeasureSpec);
-//        height = MeasureSpec.getSize(heightMeasureSpec);
 
         switch (widthMode){
             case MeasureSpec.AT_MOST:{
