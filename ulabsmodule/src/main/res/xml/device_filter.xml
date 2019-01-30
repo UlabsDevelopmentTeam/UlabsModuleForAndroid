@@ -10,4 +10,9 @@
    <usb-device vendor-id="0006" product-id="0006" />
    <usb-device vendor-id="0006" product-id="0007" />
    <usb-device vendor-id="0008" product-id="0003" />
+   <!--Bixolon SLP-TX403-->
+   <usb-device
+       class="7"
+       protocol="2"
+       subclass="1" />
 </resources>

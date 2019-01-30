@@ -2,4 +2,6 @@
 <resources>
     <dimen name="default_print_size_width">550px</dimen>
     <dimen name="default_print_size_height">480px</dimen>
+    <dimen name="default_print_size_width_bixolon">1000px</dimen>
+    <dimen name="default_print_size_height_bixolon">900px</dimen>
 </resources>
