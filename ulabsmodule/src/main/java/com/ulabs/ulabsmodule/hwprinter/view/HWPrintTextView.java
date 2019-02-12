@@ -49,6 +49,8 @@ public class HWPrintTextView extends View {
     private int paddingX;
 
     private boolean textSizeMeasureViewHeight = false;
+    private int letterSpacing = 0;
+
 
     public HWPrintTextView(Context context) {
         super(context);
@@ -117,6 +119,12 @@ public class HWPrintTextView extends View {
         if(typedArray.hasValue(R.styleable.HWPrintTextView_textSizeMeasureViewHeight)){
             textSizeMeasureViewHeight = typedArray.getBoolean(R.styleable.HWPrintTextView_textSizeMeasureViewHeight, false);
         }
+
+        if(typedArray.hasValue(R.styleable.HWPrintTextView_letterSpacing)){
+            letterSpacing = typedArray.getInt(R.styleable.HWPrintTextView_letterSpacing, 0);
+        }
+
+        text = applyLetterSpacing();
 
         typedArray.recycle();
     }
@@ -245,6 +253,25 @@ public class HWPrintTextView extends View {
         invalidate();
     }
 
+    private String applyLetterSpacing(){
+        if(text.length() > 1){
+
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0 ; i < text.length(); i++){
+                sb.append(text.charAt(i));
+                if(i != text.length()-1){
+                    for(int j = 0 ; j < letterSpacing ; j++){
+                        sb.append(" ");
+                    }
+                }
+
+            }
+            return sb.toString();
+        }
+
+        return text;
+    }
+
     private void drawText(Canvas canvas, int textAlign){
         switch (textAlign){
             case 0:{
@@ -276,7 +303,7 @@ public class HWPrintTextView extends View {
 
     public void setText(String text) {
         this.text = text;
-
+        this.text = applyLetterSpacing();
         currentLine = 0;
         String[] separation = text.split("\n");
         currentLine = separation.length;
@@ -304,6 +331,12 @@ public class HWPrintTextView extends View {
 
     public void setTextStyle(TextStyle textStyle) {
         this.textStyle = textStyle.ordinal();
+        invalidate();
+    }
+
+    public void setLetterSpacing(int letterSpacing) {
+        this.letterSpacing = letterSpacing;
+        text = applyLetterSpacing();
         invalidate();
     }
 

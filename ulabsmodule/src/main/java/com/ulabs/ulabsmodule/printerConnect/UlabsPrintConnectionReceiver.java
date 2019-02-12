@@ -9,6 +9,7 @@ import android.util.Log;
 
 public class UlabsPrintConnectionReceiver extends BroadcastReceiver {
     public static final String ACTION_USB_PERMISSION = "com.ulabsmodule.printConnect.USB_PERMISSION";
+    public static final String ACTION_Q300_CONN = "com.ulabsmodule.printConnect.BLUETOOTH_CONNECTION";
     private OnConnectionListener listener;
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -36,6 +37,17 @@ public class UlabsPrintConnectionReceiver extends BroadcastReceiver {
                     }
                 }else{
                     Log.d("ljm2006_UsbReceiver", "USB Permission denied...");
+                }
+            }
+        }else if(ACTION_Q300_CONN.equals(action)){
+            if(listener != null){
+                String type = intent.getStringExtra("type");
+                if(type.equals("bluetooth")){
+
+                    listener.onQ300BluetoothPrinterConnected();
+                }else if(type.equals("usb")){
+
+                    listener.onQ300UsbPrinterConnected();
                 }
             }
         }

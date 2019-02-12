@@ -19,6 +19,7 @@
         <attr name="textSizeMeasureViewHeight" format="boolean">
 
         </attr>
+        <attr name="letterSpacing" format="integer"/>
     </declare-styleable>
     <declare-styleable name="HWPrintLineView">
         <attr name="Linethickness" format="reference|integer"/>
