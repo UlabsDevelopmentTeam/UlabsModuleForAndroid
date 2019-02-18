@@ -8,7 +8,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 26
         versionCode 1
-        versionName "5.3.0"
+        versionName "6.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -22,17 +22,12 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'com.android.support:appcompat-v7:26.+'
     implementation 'com.android.volley:volley:1.1.0'
     implementation 'com.google.zxing:core:3.2.0'
-    implementation files('libs/BixolonLabelPrinterV120.jar')
-    implementation files('libs/bixolon_printer_v130.jar')
-    implementation files('libs/jpos118-controls.jar')
-    implementation files('libs/xerces.jar')
     testImplementation 'junit:junit:4.12'
 }
 
