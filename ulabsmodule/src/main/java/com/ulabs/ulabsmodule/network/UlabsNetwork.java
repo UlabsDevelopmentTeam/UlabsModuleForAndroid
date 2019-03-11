@@ -1,6 +1,10 @@
 package com.ulabs.ulabsmodule.network;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -10,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -27,6 +32,10 @@ public class UlabsNetwork{
     public static final int METHOD_DELETE = 2;
     public static final int METHOD_PUT = 3;
 
+    private long retryInterval = 1500;
+
+    private static final int SEND_MSG_RETRY = 0;
+
 
     private UlabsNetwork(Context context) {
         if(requestQueue == null){
@@ -41,7 +50,7 @@ public class UlabsNetwork{
         return manager;
     }
 
-    public void requireStringData(int method, final String url) {
+    public void requireStringData(final int method, final String url) {
         StringRequest request = new StringRequest(applyRequestMethod(method), url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -54,6 +63,17 @@ public class UlabsNetwork{
                 if(error.fillInStackTrace().toString().toLowerCase().contains("timeout")){
                     callback.onTimeOut(url);
                 }
+
+                if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
+                    Message msg = new Message();
+                    msg.obj = url;
+                    msg.what = 0;
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("method", method);
+                    bundle.putBoolean("charset_euckr", false);
+                    msg.setData(bundle);
+                    internalHandler.sendMessageDelayed(msg,retryInterval);
+                }
             }
         });
 
@@ -61,9 +81,8 @@ public class UlabsNetwork{
     }
 
 
-    public void requireStringData(int method, final String url, final Map<String, String> params) {
-
-        StringRequest request = new StringRequest(applyRequestMethod(method), url, new Response.Listener<String>() {
+    public void requireStringData(final int method, final String url, final Map<String, String> params) {
+        final StringRequest request = new StringRequest(applyRequestMethod(method), url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 callback.onResponse(url, response);
@@ -74,6 +93,18 @@ public class UlabsNetwork{
                 callback.onErrorResponse(url,error.fillInStackTrace().toString());
                 if(error.fillInStackTrace().toString().toLowerCase().contains("timeout")){
                     callback.onTimeOut(url);
+                }
+
+                if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
+                    Message msg = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("method", method);
+                    bundle.putBoolean("charset_euckr", false);
+                    bundle.putSerializable("params", (Serializable) params);
+                    msg.setData(bundle);
+                    msg.obj = url;
+                    msg.what = 0;
+                    internalHandler.sendMessageDelayed(msg,retryInterval);
                 }
             }
         }){
@@ -86,7 +117,7 @@ public class UlabsNetwork{
         requestQueue.add(request);
     }
 
-    public void requireEuckrStringData(int method, final String url, final Map<String,String> params){
+    public void requireEuckrStringData(final int method, final String url, final Map<String,String> params){
         EuckrStringRequest request = new EuckrStringRequest(applyRequestMethod(method), url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -98,6 +129,18 @@ public class UlabsNetwork{
                 callback.onErrorResponse(url,error.fillInStackTrace().toString());
                 if(error.fillInStackTrace().toString().toLowerCase().contains("timeout")){
                     callback.onTimeOut(url);
+                }
+
+                if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
+                    Message msg = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("method", method);
+                    bundle.putBoolean("charset_euckr", true);
+                    bundle.putSerializable("params", (Serializable) params);
+                    msg.setData(bundle);
+                    msg.obj = url;
+                    msg.what = 0;
+                    internalHandler.sendMessageDelayed(msg,retryInterval);
                 }
             }
         }){
@@ -117,6 +160,16 @@ public class UlabsNetwork{
 
     public void setOnNetworkResponseListener(OnNetworkResponseListener listener) {
         callback = listener;
+    }
+
+    public void setRetryInterval(long millis){
+        this.retryInterval = millis;
+    }
+
+    public void cancelRetry(){
+        if(internalHandler.hasMessages(SEND_MSG_RETRY)){
+            internalHandler.removeMessages(SEND_MSG_RETRY);
+        }
     }
 
     private int applyRequestMethod(int method){
@@ -142,4 +195,32 @@ public class UlabsNetwork{
             }
         }
     }
+
+    private Handler internalHandler = new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case SEND_MSG_RETRY:{
+
+                    String url = (String) msg.obj;
+                    Bundle bundle = msg.getData();
+                    int method = bundle.getInt("method");
+                    Map<String, String> params = (Map<String, String>) bundle.get("params");
+                    boolean isEuckr = bundle.getBoolean("charset_euckr");
+
+                    if(callback != null){
+                        callback.onRetry(url);
+                    }
+
+                    if(isEuckr){
+                        requireEuckrStringData(method, url, params);
+                    }else{
+                        requireStringData(method, url, params);
+                    }
+
+                    break;
+                }
+            }
+        }
+    };
 }
