@@ -35,6 +35,9 @@ public class UlabsNetwork{
     private long retryInterval = 1500;
 
     private static final int SEND_MSG_RETRY = 0;
+    private static final int SEND_MSG_RETRY_RESET = 1;
+
+    private boolean performRetry = true;
 
 
     private UlabsNetwork(Context context) {
@@ -55,6 +58,7 @@ public class UlabsNetwork{
             @Override
             public void onResponse(String response) {
                 callback.onResponse(url, response);
+                performRetry();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -64,15 +68,20 @@ public class UlabsNetwork{
                     callback.onTimeOut(url);
                 }
 
-                if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
-                    Message msg = new Message();
-                    msg.obj = url;
-                    msg.what = 0;
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("method", method);
-                    bundle.putBoolean("charset_euckr", false);
-                    msg.setData(bundle);
-                    internalHandler.sendMessageDelayed(msg,retryInterval);
+                if(performRetry){
+
+                    if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
+                        Message msg = new Message();
+                        msg.obj = url;
+                        msg.what = 0;
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("method", method);
+                        bundle.putBoolean("charset_euckr", false);
+                        msg.setData(bundle);
+                        internalHandler.sendMessageDelayed(msg,retryInterval);
+                    }
+                }else{
+                    internalHandler.sendEmptyMessage(SEND_MSG_RETRY_RESET);
                 }
             }
         });
@@ -86,6 +95,7 @@ public class UlabsNetwork{
             @Override
             public void onResponse(String response) {
                 callback.onResponse(url, response);
+                performRetry();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -94,18 +104,23 @@ public class UlabsNetwork{
                 if(error.fillInStackTrace().toString().toLowerCase().contains("timeout")){
                     callback.onTimeOut(url);
                 }
+                if(performRetry){
 
-                if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
-                    Message msg = new Message();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("method", method);
-                    bundle.putBoolean("charset_euckr", false);
-                    bundle.putSerializable("params", (Serializable) params);
-                    msg.setData(bundle);
-                    msg.obj = url;
-                    msg.what = 0;
-                    internalHandler.sendMessageDelayed(msg,retryInterval);
+                    if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
+                        Message msg = new Message();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("method", method);
+                        bundle.putBoolean("charset_euckr", false);
+                        bundle.putSerializable("params", (Serializable) params);
+                        msg.setData(bundle);
+                        msg.obj = url;
+                        msg.what = 0;
+                        internalHandler.sendMessageDelayed(msg,retryInterval);
+                    }
+                }else{
+                    internalHandler.sendEmptyMessage(SEND_MSG_RETRY_RESET);
                 }
+
             }
         }){
             @Override
@@ -122,6 +137,7 @@ public class UlabsNetwork{
             @Override
             public void onResponse(String response) {
                 callback.onResponse(url, response);
+                performRetry();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -131,17 +147,23 @@ public class UlabsNetwork{
                     callback.onTimeOut(url);
                 }
 
-                if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
-                    Message msg = new Message();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("method", method);
-                    bundle.putBoolean("charset_euckr", true);
-                    bundle.putSerializable("params", (Serializable) params);
-                    msg.setData(bundle);
-                    msg.obj = url;
-                    msg.what = 0;
-                    internalHandler.sendMessageDelayed(msg,retryInterval);
+                if(performRetry){
+
+                    if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
+                        Message msg = new Message();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("method", method);
+                        bundle.putBoolean("charset_euckr", true);
+                        bundle.putSerializable("params", (Serializable) params);
+                        msg.setData(bundle);
+                        msg.obj = url;
+                        msg.what = 0;
+                        internalHandler.sendMessageDelayed(msg,retryInterval);
+                    }
+                }else{
+                    internalHandler.sendEmptyMessage(SEND_MSG_RETRY_RESET);
                 }
+
             }
         }){
             @Override
@@ -166,10 +188,12 @@ public class UlabsNetwork{
         this.retryInterval = millis;
     }
 
+    public void performRetry(){
+        performRetry = true;
+    }
+
     public void cancelRetry(){
-        if(internalHandler.hasMessages(SEND_MSG_RETRY)){
-            internalHandler.removeMessages(SEND_MSG_RETRY);
-        }
+        performRetry = false;
     }
 
     private int applyRequestMethod(int method){
@@ -218,6 +242,10 @@ public class UlabsNetwork{
                         requireStringData(method, url, params);
                     }
 
+                    break;
+                }
+                case SEND_MSG_RETRY_RESET:{
+                    performRetry();
                     break;
                 }
             }
