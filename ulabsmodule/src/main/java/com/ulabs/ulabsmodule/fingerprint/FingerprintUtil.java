@@ -30,7 +30,7 @@ public class FingerprintUtil extends FingerprintManager.AuthenticationCallback{
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public boolean isFingerprintAvailable() {
-        return fingerprintManager.isHardwareDetected();
+        return (fingerprintManager != null && fingerprintManager.isHardwareDetected());
     }
 
     public boolean hasFingerprint(){
