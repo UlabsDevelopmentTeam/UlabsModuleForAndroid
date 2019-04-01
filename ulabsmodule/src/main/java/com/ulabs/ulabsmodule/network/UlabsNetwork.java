@@ -38,6 +38,7 @@ public class UlabsNetwork{
     private static final int SEND_MSG_RETRY_RESET = 1;
 
     private boolean performRetry = true;
+    private static final int DEFAULT_RETRY_COUNT = 3;
 
 
     private UlabsNetwork(Context context) {
@@ -112,6 +113,50 @@ public class UlabsNetwork{
                         bundle.putInt("method", method);
                         bundle.putBoolean("charset_euckr", false);
                         bundle.putSerializable("params", (Serializable) params);
+                        bundle.putInt("retryCount", DEFAULT_RETRY_COUNT);
+                        msg.setData(bundle);
+                        msg.obj = url;
+                        msg.what = 0;
+                        internalHandler.sendMessageDelayed(msg,retryInterval);
+                    }
+                }else{
+                    internalHandler.sendEmptyMessage(SEND_MSG_RETRY_RESET);
+                }
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams(){
+                return params;
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+    public void requireStringData(final int method, final String url, final Map<String, String> params, final int retryCount) {
+        final StringRequest request = new StringRequest(applyRequestMethod(method), url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                callback.onResponse(url, response);
+                performRetry();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                callback.onErrorResponse(url,error.fillInStackTrace().toString());
+                if(error.fillInStackTrace().toString().toLowerCase().contains("timeout")){
+                    callback.onTimeOut(url);
+                }
+                if(performRetry){
+
+                    if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
+                        Message msg = new Message();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("method", method);
+                        bundle.putBoolean("charset_euckr", false);
+                        bundle.putSerializable("params", (Serializable) params);
+                        bundle.putInt("retryCount", retryCount);
                         msg.setData(bundle);
                         msg.obj = url;
                         msg.what = 0;
@@ -155,6 +200,51 @@ public class UlabsNetwork{
                         bundle.putInt("method", method);
                         bundle.putBoolean("charset_euckr", true);
                         bundle.putSerializable("params", (Serializable) params);
+                        bundle.putInt("retryCount", DEFAULT_RETRY_COUNT);
+                        msg.setData(bundle);
+                        msg.obj = url;
+                        msg.what = 0;
+                        internalHandler.sendMessageDelayed(msg,retryInterval);
+                    }
+                }else{
+                    internalHandler.sendEmptyMessage(SEND_MSG_RETRY_RESET);
+                }
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams(){
+                return params;
+            }
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(2500, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestQueue.add(request);
+    }
+
+    public void requireEuckrStringData(final int method, final String url, final Map<String,String> params, final int retryCount){
+        EuckrStringRequest request = new EuckrStringRequest(applyRequestMethod(method), url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                callback.onResponse(url, response);
+                performRetry();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                callback.onErrorResponse(url,error.fillInStackTrace().toString());
+                if(error.fillInStackTrace().toString().toLowerCase().contains("timeout")){
+                    callback.onTimeOut(url);
+                }
+
+                if(performRetry){
+
+                    if(error.fillInStackTrace().toString().toLowerCase().contains("volley")){
+                        Message msg = new Message();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("method", method);
+                        bundle.putBoolean("charset_euckr", true);
+                        bundle.putSerializable("params", (Serializable) params);
+                        bundle.putInt("retryCount", retryCount);
                         msg.setData(bundle);
                         msg.obj = url;
                         msg.what = 0;
@@ -229,6 +319,7 @@ public class UlabsNetwork{
                     String url = (String) msg.obj;
                     Bundle bundle = msg.getData();
                     int method = bundle.getInt("method");
+                    int retryCount = bundle.getInt("retryCount");
                     Map<String, String> params = (Map<String, String>) bundle.get("params");
                     boolean isEuckr = bundle.getBoolean("charset_euckr");
 
@@ -236,12 +327,17 @@ public class UlabsNetwork{
                         callback.onRetry(url);
                     }
 
-                    if(isEuckr){
-                        requireEuckrStringData(method, url, params);
+                    if(retryCount-1 > 0){
+                        if(isEuckr){
+                            requireEuckrStringData(method, url, params, retryCount-1);
+                        }else{
+                            requireStringData(method, url, params, retryCount-1);
+                        }
                     }else{
-                        requireStringData(method, url, params);
+                        if(callback != null){
+                            callback.onRetryAttemptFinished(url);
+                        }
                     }
-
                     break;
                 }
                 case SEND_MSG_RETRY_RESET:{

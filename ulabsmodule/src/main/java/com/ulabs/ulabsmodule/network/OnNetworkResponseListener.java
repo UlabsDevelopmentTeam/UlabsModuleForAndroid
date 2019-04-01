@@ -9,4 +9,5 @@ public interface OnNetworkResponseListener {
     void onErrorResponse(String url,String result);
     void onTimeOut(String url);
     void onRetry(String url);
+    void onRetryAttemptFinished(String url);
 }
