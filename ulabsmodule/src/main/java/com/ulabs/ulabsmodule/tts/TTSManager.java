@@ -18,11 +18,13 @@ import java.util.Locale;
 public class TTSManager implements ITTSManager {
     private static TTSManager ttsManager;
     private TextToSpeech tts;
+    private Context context;
 
     public static final int QUEUE_MODE_FLUSH = 0;
     public static final int QUEUE_MODE_ADD = 1;
 
     private TTSManager(final Context context) {
+        this.context = context;
         tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -75,6 +77,13 @@ public class TTSManager implements ITTSManager {
                     break;
                 }
             }
+        }
+    }
+
+    @Override
+    public void changeLanguageLocale(final Locale locale) {
+        if(tts != null){
+            tts.setLanguage(locale);
         }
     }
 
