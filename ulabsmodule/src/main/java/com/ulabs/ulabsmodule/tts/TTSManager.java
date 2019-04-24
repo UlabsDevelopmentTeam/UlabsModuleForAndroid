@@ -7,8 +7,6 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.ulabs.ulabsmodule.R;
-
 import java.util.Locale;
 
 /**
@@ -31,7 +29,7 @@ public class TTSManager implements ITTSManager {
                 if(status != TextToSpeech.ERROR){
                    int languageResult = tts.setLanguage(Locale.KOREAN);
                     if(languageResult == TextToSpeech.LANG_MISSING_DATA || languageResult == TextToSpeech.LANG_NOT_SUPPORTED){
-                        Toast.makeText(context, R.string.sound_data_not_exist, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "TextToSpeech language is not supported...\n we recommend using google tts", Toast.LENGTH_LONG).show();
                         Log.e("TTSManager", "TextToSpeech language is not supported...");
                         Intent intent = new Intent();
                         intent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
@@ -39,7 +37,7 @@ public class TTSManager implements ITTSManager {
                     }
                 }else{
                     Log.e("TTSManager", "TextToSpeech initialization failed!!!");
-                    Toast.makeText(context, R.string.tts_engine_initialization_failed, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "TextToSpeech initialization failed!!!", Toast.LENGTH_LONG).show();
                 }
             }
         });
