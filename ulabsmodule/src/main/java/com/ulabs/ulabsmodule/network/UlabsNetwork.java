@@ -16,6 +16,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -310,11 +312,70 @@ public class UlabsNetwork{
                 return params;
             }
         };
+
         request.setRetryPolicy(new DefaultRetryPolicy(2500, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         requestQueue.add(request);
     }
 
     public void require(Request request) {
+        requestQueue.add(request);
+    }
+
+    public void requestPost(String url, final HashMap<String,String> params, final OnSingleResponseListener listener){
+        StringRequest request = new StringRequest(applyRequestMethod(METHOD_POST), url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                listener.onResponse(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                listener.onError(error.getMessage());
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams(){
+                return params;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(2500, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestQueue.add(request);
+    }
+
+    public void requestGet(String url, final HashMap<String,String> params, final OnSingleResponseListener listener){
+        StringBuilder sb = new StringBuilder(url);
+        sb.append("?");
+        Iterator<String> keySet = params.keySet().iterator();
+
+        int i = 0;
+
+        while (keySet.hasNext()){
+            String key = keySet.next();
+            sb.append(key).append("=").append(params.get(key));
+
+            if(i > 0 && keySet.hasNext()){
+                sb.append("&");
+            }
+
+            i++;
+        }
+
+        String appendedUrl = sb.toString();
+
+        StringRequest request = new StringRequest(applyRequestMethod(METHOD_GET), appendedUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                listener.onResponse(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                listener.onError(error.getMessage());
+            }
+        });
+
+        request.setRetryPolicy(new DefaultRetryPolicy(2500, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         requestQueue.add(request);
     }
 
