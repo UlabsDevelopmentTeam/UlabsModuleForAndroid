@@ -31,7 +31,81 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+apply plugin: 'maven'
+apply plugin: 'signing'
 
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
 
+task javadoc(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+}
 
-apply from: 'bintray-publish.gradle'
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+//    javadoc.options.encoding = 'UTF-8'
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+group = "io.github.ulabsdevelopmentteam"
+archivesBaseName = "ulabsmodule"
+version = "6.7.0"
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'ulabsmodule'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'android module for ulabs'
+                url 'https://github.com/UlabsDevelopmentTeam/UlabsModuleForAndroid'
+
+                scm {
+                    connection 'scm:svn:https://github.com/UlabsDevelopmentTeam/UlabsModuleForAndroid.git'
+                    developerConnection 'scm:svn:https://github.com/UlabsDevelopmentTeam/UlabsModuleForAndroid.git'
+                    url 'https://github.com/UlabsDevelopmentTeam/UlabsModuleForAndroid'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'ulabs'
+                        name 'ulabs'
+                        email 'obiz.co.kr@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
