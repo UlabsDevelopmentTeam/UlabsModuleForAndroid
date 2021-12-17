@@ -8,9 +8,14 @@ import android.os.Message;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -330,7 +335,25 @@ public class UlabsNetwork{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onError(error.getMessage());
+                String errorMSg = "UnknownError";
+
+                if(error instanceof TimeoutError){
+
+                    errorMSg = "TimeOutError";
+                }else if(error instanceof NoConnectionError){
+
+                    errorMSg = "NoConnectionError";
+                }else if (error instanceof ServerError) {
+
+                    errorMSg = "ServerError";
+                } else if (error instanceof NetworkError) {
+
+                    errorMSg = "NetworkError";
+                } else if (error instanceof ParseError) {
+
+                    errorMSg = "ParseError";
+                }
+                listener.onError(errorMSg);
             }
         }){
             @Override
@@ -352,7 +375,26 @@ public class UlabsNetwork{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onError(error.getMessage());
+
+                String errorMSg = "UnknownError";
+
+                if(error instanceof TimeoutError){
+
+                    errorMSg = "TimeOutError";
+                }else if(error instanceof NoConnectionError){
+
+                    errorMSg = "NoConnectionError";
+                }else if (error instanceof ServerError) {
+
+                    errorMSg = "ServerError";
+                } else if (error instanceof NetworkError) {
+
+                    errorMSg = "NetworkError";
+                } else if (error instanceof ParseError) {
+
+                    errorMSg = "ParseError";
+                }
+                listener.onError(errorMSg);
             }
         }){
             @Override
